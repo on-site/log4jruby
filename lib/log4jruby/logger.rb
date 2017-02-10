@@ -183,6 +183,25 @@ module Log4jruby
       end
     end
 
+    # Compatibility with Logger#add and ActiveSupport::TaggedLogging
+    # needed to use a Log4jruby::Logger with Honeybadger
+    def add(logger_level, message, _prog_name = nil, &block)
+      case logger_level
+      when ::Logger::FATAL
+        fatal message, &block
+      when ::Logger::ERROR
+        error message, &block
+      when ::Logger::WARN
+        warn  message, &block
+      when ::Logger::INFO
+        info  message, &block
+      when ::Logger::DEBUG
+        debug message, &block
+      else
+        raise "Unsupported logger level: #{logger_level}"
+      end
+    end
+
     private
 
     def initialize(logger) # :nodoc:
